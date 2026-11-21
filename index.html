@@ -1,0 +1,298 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IDIOT.EXE - System Failure</title>
+<style>
+* { box-sizing:border-box; }
+body {
+ margin:0;
+ background:#008080;
+ font-family:Tahoma,Arial,sans-serif;
+ overflow:hidden;
+ user-select:none;
+}
+#desktop {
+ height:calc(100vh - 38px);
+ position:relative;
+ background:
+ linear-gradient(135deg,rgba(0,0,0,.1),transparent),
+ #087b83;
+ overflow:hidden;
+}
+.icon {
+ width:80px;
+ padding:10px 3px;
+ text-align:center;
+ color:white;
+ font-size:12px;
+ text-shadow:1px 1px black;
+ cursor:pointer;
+}
+.icon span { font-size:32px; display:block; }
+#taskbar {
+ height:38px;
+ background:linear-gradient(#dedede,#888);
+ border-top:2px solid white;
+ position:fixed;
+ bottom:0;
+ width:100%;
+ display:flex;
+ align-items:center;
+ padding:4px;
+ gap:8px;
+ z-index:999999;
+}
+#start {
+ background:linear-gradient(#70d76a,#158b21);
+ color:white;
+ font-weight:bold;
+ padding:7px 15px;
+ border:2px outset #ddd;
+ cursor:pointer;
+}
+#clock { margin-left:auto; padding:8px; }
+#stop {
+ position:fixed;
+ top:5px;
+ right:5px;
+ z-index:1000000;
+ font-size:10px;
+ opacity:.22;
+ cursor:pointer;
+ background:#111;
+ color:white;
+ border:1px solid white;
+ padding:5px;
+}
+#stop:hover { opacity:1; }
+.window {
+ position:absolute;
+ width:290px;
+ min-height:130px;
+ background:#ddd;
+ border:3px outset white;
+ box-shadow:4px 4px 12px #0008;
+ z-index:10;
+}
+.titlebar {
+ background:linear-gradient(90deg,#000080,#1084d0);
+ color:white;
+ font-weight:bold;
+ font-size:13px;
+ padding:6px;
+ display:flex;
+ justify-content:space-between;
+ cursor:move;
+}
+.close {
+ background:#ddd;
+ color:black;
+ border:2px outset white;
+ padding:0 6px;
+ cursor:pointer;
+}
+.content {
+ padding:16px;
+ font-size:13px;
+ text-align:center;
+}
+.content button {
+ margin:8px 3px;
+ padding:5px 12px;
+ cursor:pointer;
+}
+.warning { color:red;font-weight:bold; }
+#toast {
+ position:fixed;
+ bottom:45px;
+ right:10px;
+ background:#ffffcc;
+ border:2px outset white;
+ padding:12px;
+ font-size:12px;
+ display:none;
+ z-index:999998;
+}
+#startmenu {
+ display:none;
+ position:fixed;
+ bottom:38px;
+ left:3px;
+ background:#ddd;
+ border:3px outset white;
+ width:210px;
+ padding:10px;
+ z-index:999999;
+}
+#startmenu div {
+ padding:10px;
+ cursor:pointer;
+}
+#startmenu div:hover {background:#aaa;}
+</style>
+</head>
+<body>
+
+<div id="desktop">
+ <div class="icon" onclick="makeWindow()">
+  <span>💻</span>My Computer
+ </div>
+ <div class="icon" onclick="makeWindow()">
+  <span>🗑️</span>Recycle Bin
+ </div>
+ <div class="icon" onclick="makeWindow()">
+  <span>🌐</span>Internet Explorer
+ </div>
+ <div class="icon" onclick="makeWindow()">
+  <span>📁</span>Important Files
+ </div>
+</div>
+
+<button id="stop" onclick="toggleChaos()">
+ STOP DUPLICATING WINDOWS
+</button>
+
+<div id="taskbar">
+ <button id="start" onclick="toggleStart()">START</button>
+ <span id="tasktext">Your computer is doing great!</span>
+ <span id="clock"></span>
+</div>
+
+<div id="startmenu">
+ <div onclick="makeWindow()">💻 Open Computer</div>
+ <div onclick="makeWindow()">🎮 Games</div>
+ <div onclick="makeWindow()">🧠 Brain.exe</div>
+ <div onclick="alert('There is no shutdown. You live here now.')">🔌 Shut down</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+let chaos = true;
+let count = 0;
+let z = 20;
+
+const messages = [
+ "I FORGOT HOW TO COMPUTER.",
+ "WHY ARE YOU CLICKING ME?",
+ "WINDOWS HAS LEFT THE CHAT.",
+ "ERROR: BRAIN NOT FOUND.",
+ "I ATE YOUR MOUSE.",
+ "PLEASE STOP FEEDING THE COMPUTER.",
+ "THE INTERNET IS CONFUSED.",
+ "THIS IS NOT A FEATURE.",
+ "404: COMMON SENSE NOT FOUND.",
+ "I AM A CALCULATOR NOW."
+];
+
+const titles = [
+ "Important System Message",
+ "Brain.exe",
+ "Windows Error",
+ "Totally Normal Program",
+ "Internet Explorer",
+ "Unpaid Intern",
+ "Critical Thinking",
+ "Definitely Not Malware"
+];
+
+function random(arr) {
+ return arr[Math.floor(Math.random()*arr.length)];
+}
+
+function makeWindow() {
+ count++;
+ let win = document.createElement("div");
+ win.className = "window";
+ win.style.left = Math.max(0,Math.random()*(innerWidth-310))+"px";
+ win.style.top = Math.max(0,Math.random()*(innerHeight-200))+"px";
+ win.style.zIndex = ++z;
+
+ win.innerHTML = `
+  <div class="titlebar">
+   <span>${random(titles)}</span>
+   <button class="close" onclick="this.closest('.window').remove()">X</button>
+  </div>
+  <div class="content">
+   <div style="font-size:32px">🤡</div>
+   <p class="warning">${random(messages)}</p>
+   <p>Windows has encountered an intelligence problem.</p>
+   <button onclick="makeWindow()">OK</button>
+   <button onclick="this.innerText='WHY'">Cancel</button>
+  </div>
+ `;
+ document.getElementById("desktop").appendChild(win);
+ drag(win);
+
+ if(chaos && Math.random()<0.7 && count<100) {
+  setTimeout(()=>{
+   if(chaos && win.isConnected) makeWindow();
+  },Math.random()*1800+500);
+ }
+}
+
+function drag(win) {
+ let bar=win.querySelector(".titlebar");
+ let x=0,y=0,active=false;
+
+ bar.addEventListener("pointerdown",e=>{
+  if(e.target.tagName==="BUTTON") return;
+  active=true;
+  x=e.clientX-win.offsetLeft;
+  y=e.clientY-win.offsetTop;
+  win.style.zIndex=++z;
+  bar.setPointerCapture(e.pointerId);
+ });
+ bar.addEventListener("pointermove",e=>{
+  if(!active)return;
+  win.style.left=(e.clientX-x)+"px";
+  win.style.top=(e.clientY-y)+"px";
+ });
+ bar.addEventListener("pointerup",()=>active=false);
+}
+
+function toggleChaos() {
+ chaos=!chaos;
+ const btn=document.getElementById("stop");
+
+ if(!chaos) {
+  btn.innerText="CHAOS DISABLED";
+  btn.style.background="#147b20";
+  document.getElementById("tasktext").innerText="Computer is behaving. For now.";
+ } else {
+  btn.innerText="STOP DUPLICATING WINDOWS";
+  btn.style.background="#111";
+  document.getElementById("tasktext").innerText="OH NO. CHAOS IS BACK.";
+  makeWindow();
+ }
+}
+
+function toggleStart() {
+ const menu=document.getElementById("startmenu");
+ menu.style.display=menu.style.display==="block"?"none":"block";
+}
+
+function toast() {
+ const t=document.getElementById("toast");
+ t.innerText=random(messages);
+ t.style.display="block";
+ setTimeout(()=>t.style.display="none",2500);
+}
+
+setInterval(()=>{
+ document.getElementById("clock").innerText=new Date().toLocaleTimeString();
+},1000);
+
+setInterval(()=>{
+ if(chaos && Math.random()<0.45) toast();
+},5000);
+
+setTimeout(()=>makeWindow(),700);
+setTimeout(()=>makeWindow(),1700);
+setTimeout(()=>makeWindow(),2800);
+</script>
+</body>
+</html>
